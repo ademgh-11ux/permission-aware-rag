@@ -42,7 +42,8 @@ def load_documents(folder:Path)->list[Document]:
         )
         documents.append(doc)
     return documents
-here = Path(__file__).parent
-docs = load_documents(here/"adempro-docs")
-for doc in docs:
-    print(f"{doc.id} | {doc.access} | {doc.updated} | {doc.content_hash[:8]}")
+if __name__ == "__main__":
+    here = Path(__file__).parent
+    docs = load_documents(here/"adempro-docs")
+    for doc in docs:
+        print(f"{doc.id} | {doc.access} | {doc.updated} | {doc.content_hash[:8]}")
