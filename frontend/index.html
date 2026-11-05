@@ -1,13 +1,22 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
     <head>
-        <title>AdemPro_Assistant</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AdemPro Assistant</title>
     </head>
     <body>
-        <h1>Welcome to AdemPro Assistant</h1>
-        <div id="message"></div>
-        <input id="question" placeholder="Ask AdemPro anything" focus />
-        <button id="send">send</button>
+        <header>
+            <h1 class="column">AdemPro Assistant</h1>
+        </header>
+        <div id="message" aria-live="polite" class="column">
+            <div class="bubble assistant">Hi! I'm AdemPro Assistant. How can I help you today?</div>
+        </div>
+        <footer class="column">
+            <input id="question" placeholder="Ask AdemPro anything" autofocus maxlength="1000" aria-label="Your question" />
+            <button id="send">Send</button>
+        </footer>
         <script src="app.js"></script>
 
     </body>

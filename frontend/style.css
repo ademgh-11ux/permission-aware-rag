@@ -1,0 +1,100 @@
+/* 1. THE WHOLE PAGE: fill the screen, stack sections vertically */
+:root {
+    --primary: #2563eb;        /* define once (names start with --) */
+    --border: #cbd5e1;
+}
+*, *::before, *::after {
+  box-sizing: border-box;   /* width now INCLUDES padding and border */
+}
+.column {
+  width: 100%;          /* full width on small screens (phones) */
+  max-width: 760px;     /* but never wider than 760px on big screens */
+  margin: 0 auto;       /* 0 top/bottom, "auto" left/right = centered */
+}
+html, body {
+  height: 100%;              /* full height of the screen */
+  margin: 0;              /* remove the browser's default gap */
+}
+
+body {
+  display: flex;             /* turn on flexbox */
+  flex-direction: column;      /* stack header, messages, footer vertically */
+  font-family: system-ui, sans-serif;
+  background: #f8fafc;          /* page background color */
+  color: #070a12;               /* main text color */
+}
+
+/* 2. TOP BAR */
+header {
+  background: var(--primary);          /* blue */
+  color: white;
+  padding: 16px;             /* e.g. 16px */
+}
+
+header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+/* 3. MESSAGE AREA: fills the middle, scrolls, stacks bubbles */
+#message {
+  flex: 1;                /* take all the remaining height */
+  overflow-y: auto;          /* scrollbar when content is too tall */
+  display: flex;
+  flex-direction: column;      /* bubbles stacked vertically */
+  gap: 16px;                 /* space between bubbles */
+  padding: 16px;
+}
+
+/* 4. BUBBLES */
+.bubble {
+  padding: 12px;             /* space inside the bubble */
+  border-radius: 16px;       /* rounded corners */
+  max-width: 75%;           /* e.g. 75% */
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.bubble.user {
+  align-self: flex-end;          /* push to the RIGHT */
+  background: var(--primary);          /* blue */
+  color: white;
+}
+
+.bubble.assistant {
+  align-self: flex-start;          /* push to the LEFT */
+  background: var(--border);          /* light grey */
+}
+
+/* 5. INPUT BAR */
+footer {
+  display: flex;             /* input and button side by side */
+  gap: 8px;
+  padding: 12px;
+}
+
+footer input {
+  flex: 1;                /* stretch to fill the width */
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 999px;       /* fully round ends: try 999px */
+  font: inherit;            /* use the page font instead of the browser default */
+}
+footer input:focus {
+  outline: 2px solid var(--primary);
+}
+footer button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 999px;
+  background: var(--primary);          /* blue */
+  color: white;
+  font: inherit;
+  cursor: pointer;          /* hand cursor on hover */
+}
+
+footer button:disabled {
+  opacity: 0.5;             /* faded while waiting, e.g. 0.5 */
+  cursor: not-allowed;
+}
