@@ -7,7 +7,14 @@ from google import genai
 from pydantic import BaseModel
 from fastapi import HTTPException
 from google.genai import errors
+from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:5500"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
+)
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))  
 
