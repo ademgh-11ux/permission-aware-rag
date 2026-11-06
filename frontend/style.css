@@ -1,34 +1,46 @@
-/* 1. THE WHOLE PAGE: fill the screen, stack sections vertically */
+/* 1. DESIGN TOKENS: every color defined once */
 :root {
-    --primary: #2563eb;        /* define once (names start with --) */
-    --border: #cbd5e1;
+  --primary: #2563eb;        /* brand blue: header, user bubbles, button */
+  --assistant-bg: #e2e8f0;   /* assistant bubble background */
+  --border: #cbd5e1;         /* input border */
+  --page-bg: #f8fafc;        /* page background */
+  --text: #0f172a;           /* main text */
+  --code-bg: #0f172a;        /* code block background */
+  --code-text: #e2e8f0;      /* code block text */
+  --inline-code-bg: #cbd5e1; /* inline code background */
 }
+
+/* width includes padding and border, so sizes add up predictably */
 *, *::before, *::after {
-  box-sizing: border-box;   /* width now INCLUDES padding and border */
+  box-sizing: border-box;
 }
+
+/* reusable centered column: full width on phones, max 760px on big screens */
 .column {
-  width: 100%;          /* full width on small screens (phones) */
-  max-width: 760px;     /* but never wider than 760px on big screens */
-  margin: 0 auto;       /* 0 top/bottom, "auto" left/right = centered */
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
 }
+
+/* 2. PAGE LAYOUT: header on top, messages in the middle, input at the bottom */
 html, body {
-  height: 100%;              /* full height of the screen */
-  margin: 0;              /* remove the browser's default gap */
+  height: 100%;
+  margin: 0;
 }
 
 body {
-  display: flex;             /* turn on flexbox */
-  flex-direction: column;      /* stack header, messages, footer vertically */
+  display: flex;
+  flex-direction: column;
   font-family: system-ui, sans-serif;
-  background: #f8fafc;          /* page background color */
-  color: #070a12;               /* main text color */
+  background: var(--page-bg);
+  color: var(--text);
 }
 
-/* 2. TOP BAR */
+/* 3. TOP BAR */
 header {
-  background: var(--primary);          /* blue */
+  background: var(--primary);
   color: white;
-  padding: 16px;             /* e.g. 16px */
+  padding: 16px;
 }
 
 header h1 {
@@ -36,65 +48,151 @@ header h1 {
   font-size: 20px;
 }
 
-/* 3. MESSAGE AREA: fills the middle, scrolls, stacks bubbles */
+/* 4. MESSAGE AREA: the only part that scrolls */
 #message {
-  flex: 1;                /* take all the remaining height */
-  overflow-y: auto;          /* scrollbar when content is too tall */
+  flex: 1;
+  overflow-y: auto;
   display: flex;
-  flex-direction: column;      /* bubbles stacked vertically */
-  gap: 16px;                 /* space between bubbles */
+  flex-direction: column;
+  gap: 16px;
   padding: 16px;
 }
 
-/* 4. BUBBLES */
+/* 5. BUBBLES */
 .bubble {
-  padding: 12px;             /* space inside the bubble */
-  border-radius: 16px;       /* rounded corners */
-  max-width: 75%;           /* e.g. 75% */
+  padding: 12px 16px;
+  border-radius: 16px;
+  max-width: 75%;
   line-height: 1.5;
-  white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 
 .bubble.user {
-  align-self: flex-end;          /* push to the RIGHT */
-  background: var(--primary);          /* blue */
+  align-self: flex-end;
+  background: var(--primary);
   color: white;
+  white-space: pre-wrap;     /* user text is plain text: keep its line breaks */
 }
 
 .bubble.assistant {
-  align-self: flex-start;          /* push to the LEFT */
-  background: var(--border);          /* light grey */
+  align-self: flex-start;
+  background: var(--assistant-bg);
+  max-width: 90%;            /* answers need more room than short user messages */
 }
 
-/* 5. INPUT BAR */
+/* 6. FORMATTED ANSWERS: Markdown rendered as HTML inside assistant bubbles */
+.bubble.assistant p {
+  margin: 0 0 8px;
+}
+
+.bubble.assistant h1,
+.bubble.assistant h2,
+.bubble.assistant h3 {
+  font-size: 17px;
+  margin: 12px 0 6px;
+}
+
+.bubble.assistant ul,
+.bubble.assistant ol {
+  margin: 0 0 8px;
+  padding-left: 20px;
+}
+
+.bubble.assistant li {
+  margin-bottom: 4px;
+}
+
+.bubble.assistant hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 12px 0;
+}
+
+.bubble.assistant code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.9em;
+  background: var(--inline-code-bg);
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+
+.bubble.assistant pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 12px;
+  border-radius: 8px;
+  overflow-x: auto;          /* long code lines scroll inside the block */
+  margin: 0 0 8px;
+}
+
+/* code inside a code block: undo the inline-code styling */
+.bubble.assistant pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+/* tables: scroll sideways inside the bubble if too wide, instead of squeezing */
+.bubble.assistant table {
+  display: block;            /* lets the table scroll on its own */
+  overflow-x: auto;
+  border-collapse: collapse; /* cell borders merge into single lines */
+  margin: 0 0 8px;
+}
+
+.bubble.assistant th,
+.bubble.assistant td {
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  text-align: left;
+  vertical-align: top;       /* align multi-line cells at the top */
+  overflow-wrap: normal;     /* break between words only, never mid-word */
+  min-width: 100px;          /* columns can't shrink below a readable width */
+}
+
+.bubble.assistant th {
+  background: var(--border); /* header row stands out */
+}
+
+/* no extra gap at the bottom of a bubble, whatever element comes last */
+.bubble.assistant > :last-child {
+  margin-bottom: 0;
+}
+
+/* first element doesn't need a top gap either (e.g. an answer starting with a heading) */
+.bubble.assistant > :first-child {
+  margin-top: 0;
+}
+
+/* 7. INPUT BAR */
 footer {
-  display: flex;             /* input and button side by side */
+  display: flex;
   gap: 8px;
   padding: 12px;
 }
 
 footer input {
-  flex: 1;                /* stretch to fill the width */
+  flex: 1;
   padding: 10px 14px;
-  border: 1px solid #ccc;
-  border-radius: 999px;       /* fully round ends: try 999px */
-  font: inherit;            /* use the page font instead of the browser default */
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font: inherit;
 }
+
 footer input:focus {
   outline: 2px solid var(--primary);
 }
+
 footer button {
   padding: 10px 18px;
   border: none;
   border-radius: 999px;
-  background: var(--primary);          /* blue */
+  background: var(--primary);
   color: white;
   font: inherit;
-  cursor: pointer;          /* hand cursor on hover */
+  cursor: pointer;
 }
 
 footer button:disabled {
-  opacity: 0.5;             /* faded while waiting, e.g. 0.5 */
+  opacity: 0.5;
   cursor: not-allowed;
 }

@@ -44,13 +44,15 @@ send.addEventListener("click", async function () {
     }
     const responseData = await responseMessage.json();
     if (responseMessage.ok) {
-      loading.textContent = responseData.answer;
+        const UnsafeAnswer = marked.parse(responseData.answer);   
+      loading.innerHTML = DOMPurify.sanitize(UnsafeAnswer);
     } else {
         if (typeof responseData.detail !== "string") {
             loading.textContent = "Error: Your question couldn’t be sent. Please check that it isn’t empty or longer than 1000 characters.";
-        } else {
-            loading.textContent = "Error: " + responseData.detail;
-        }
+        } 
+        else {
+                loading.textContent = "Error: " + responseData.detail;
+            }
     }
   } catch (error) {
     console.error("Error fetching chat response:", error);
