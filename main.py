@@ -4,7 +4,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 from google import genai
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
 from fastapi import HTTPException
 from google.genai import errors
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,9 +19,11 @@ load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))  
 
 class ChatRequest(BaseModel):         
-    question: str           
+    model_config = ConfigDict(str_strip_whitespace=True)
+    question: str = Field(min_length=1, max_length=1000)         
 class ChatResponse(BaseModel):
     answer: str
+
 
 @app.get("/health")
 def health():
@@ -43,7 +45,7 @@ def get_documents():
 def chat(req: ChatRequest) -> ChatResponse:   
     try:
         response = client.models.generate_content(
-            model="gemini-3.8-flash",
+            model="gemini-3.5-flash-lite",
             contents=req.question,        
         )
     except errors.ServerError:
