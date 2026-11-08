@@ -31,7 +31,7 @@ send.addEventListener("click", async function () {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ question: text }),
-      signal: AbortSignal.timeout(1),
+      signal: AbortSignal.timeout(30000),
     });
     const type = responseMessage.headers.get("Content-Type");
     if (!type || !type.includes("application/json")) {
