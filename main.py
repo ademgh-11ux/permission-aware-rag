@@ -2,11 +2,12 @@ from fastapi import FastAPI
 from document_loader import load_documents
 from pathlib import Path
 import os
+import httpx
 from dotenv import load_dotenv
 from google import genai
 from pydantic import BaseModel, Field, ConfigDict
 from fastapi import HTTPException
-from google.genai import errors
+from google.genai import errors, types
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 app.add_middleware(
@@ -16,11 +17,14 @@ app.add_middleware(
     allow_headers=["Content-Type"],
 )
 load_dotenv()
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))  
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY"),
+    http_options=types.HttpOptions(timeout=20000)
+    )  
 
 class ChatRequest(BaseModel):         
     model_config = ConfigDict(str_strip_whitespace=True)
-    question: str = Field(min_length=1, max_length=1000)         
+    question: str = Field(min_length=1, max_length=1000)   #must much maxlength in html (frontend)      
 class ChatResponse(BaseModel):
     answer: str
 
@@ -48,9 +52,12 @@ def chat(req: ChatRequest) -> ChatResponse:
             model="gemini-3.5-flash-lite",
             contents=req.question,        
         )
+    except httpx.TimeoutException as e:
+        print(f"Gemini TImeout: {e}")
+        raise HTTPException(status_code=504, detail="The assistant took too long to respond. Please try again later.")
     except errors.ServerError:
         raise HTTPException(status_code=503, detail="the model is busy right now please try again later")
     except errors.ClientError as e:
         print(f"Gemini client error: {e}")
         raise HTTPException(status_code=500, detail="Something went wrong. Please try again later.")
-    return ChatResponse(answer=response.text)  
+    return ChatResponse(answer=response.text)

@@ -31,6 +31,7 @@ send.addEventListener("click", async function () {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ question: text }),
+      signal: AbortSignal.timeout(1),
     });
     const type = responseMessage.headers.get("Content-Type");
     if (!type || !type.includes("application/json")) {
@@ -55,8 +56,15 @@ send.addEventListener("click", async function () {
             }
     }
   } catch (error) {
-    console.error("Error fetching chat response:", error);
-    loading.textContent = "Can't reach the assistant. Please try again.";
+    if (error.name ==="TimeoutError"){
+      console.error("The assistant took too long to respond,", error);
+      loading.textContent = "The assistant took too long to respond. Please try again.";
+    }
+    else{
+      console.error("Error fetching chat response:", error);
+      loading.textContent = "Can't reach the assistant. Please try again.";
+    }
+    
   } finally {
     send.disabled = false;
     message.scrollTop = message.scrollHeight;
