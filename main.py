@@ -23,6 +23,7 @@ raw_origin = os.getenv("ALLOWED_ORIGINS")
 if not raw_origin:
     raise RuntimeError("ALLOWED_ORIGINS is missing. Add it to your .env file.")
 allowed_origin = [origin.strip() for origin in raw_origin.split(",")]
+print("Allowed origins:", allowed_origin)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origin,
