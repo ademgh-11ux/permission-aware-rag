@@ -152,7 +152,10 @@ header h1 {
 .bubble.assistant th {
   background: var(--border); /* header row stands out */
 }
-
+.bubble.assistant a,
+.bubble.assistant a:visited {
+  color: var(--primary);
+}
 /* no extra gap at the bottom of a bubble, whatever element comes last */
 .bubble.assistant > :last-child {
   margin-bottom: 0;
