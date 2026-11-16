@@ -1,5 +1,8 @@
 // Configuration: the backend address lives in one place (it will change when we deploy)
-const API_URL = "http://127.0.0.1:8000/chat";
+const isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
+const API_URL = isLocal
+  ? "http://127.0.0.1:8000/chat"
+  : "https://permission-aware-rag-wm40.onrender.com/chat";
 const REQUEST_TIMEOUT_MS = 30000; // must stay longer than the backend's Gemini timeout (20s)
 
 const message = document.getElementById("message");
