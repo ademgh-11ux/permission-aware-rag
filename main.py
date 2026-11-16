@@ -10,12 +10,6 @@ from fastapi import HTTPException
 from google.genai import errors, types
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5500"],
-    allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
-)
 
 load_dotenv()
 api_key=os.getenv("GEMINI_API_KEY")
@@ -25,6 +19,16 @@ if not api_key:
 model_name = os.getenv("GEMINI_MODEL")
 if not model_name:
     raise RuntimeError("GEMINI_MODEL is missing. Add it to your .env file.")
+raw_origin = os.getenv("ALLOWED_ORIGINS")
+if not raw_origin:
+    raise RuntimeError("ALLOWED_ORIGINS is missing. Add it to your .env file.")
+allowed_origin = [origin.strip() for origin in raw_origin.split(",")]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origin,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
+)
 
 client = genai.Client(
     api_key=api_key,
